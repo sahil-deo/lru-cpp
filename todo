@@ -11,7 +11,9 @@
         c. LRU get 
         d. LRU set 
 
-2. Multithreaded implementation with lock free data structures
+2. Multithreaded implementation 
+    i. Using mutexes over queues and shared data structures
+    ii. Implement Lock free data structures
 
 3. Use smart pointers instead of raw pointers
 
