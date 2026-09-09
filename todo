@@ -1,0 +1,18 @@
+1. Add Gateway to support connecting clients
+    i. Implement Server using Poll
+        a. Initialize
+        b. Accept connection
+        c. Accept data over network
+        d. LRU get 
+        e. LRU set
+    ii. Implement client
+        a. get command
+        b. request data
+        c. LRU get 
+        d. LRU set 
+
+2. Multithreaded implementation with lock free data structures
+
+3. Use smart pointers instead of raw pointers
+
+4. Use RAII techniques where ever possible
