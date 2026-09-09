@@ -16,3 +16,5 @@
 3. Use smart pointers instead of raw pointers
 
 4. Use RAII techniques where ever possible
+
+5. Create a ReadMe.md file
