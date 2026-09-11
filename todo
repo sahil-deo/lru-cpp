@@ -1,4 +1,7 @@
 1. Add Gateway to support connecting clients
+
+    -i. Single Client via Select 
+    
     i. Implement Server using Poll
         a. Initialize
         b. Accept connection
