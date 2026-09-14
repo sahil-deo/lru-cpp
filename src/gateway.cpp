@@ -1,7 +1,10 @@
 #include "gateway.h"
-
-Gateway::Gateway(short port)
+#include <iostream>
+Gateway::Gateway(short port, std::queue<std::string>* messages, std::mutex* mtx)
 {
+
+    m_mtx = mtx;
+    m_messages = messages;
     sockaddr_in addr{};
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
@@ -39,11 +42,34 @@ void Gateway::start()
         exit(EXIT_FAILURE);
     }
 
-    
+    char buffer[1024];
 
+    while(1)
+    {
+        int n = recv(m_clientFd, &buffer, sizeof(buffer), 0);
+
+        if(n <= 0)
+        {
+            exit(EXIT_FAILURE);
+        }
+        std::cout << n << "\n";
+        std::cout << std::string(buffer, n) << "\n";
+        m_mtx->lock();
+        m_messages->push(std::string(buffer, n));
+        m_mtx->unlock();
+    }
 }
 
 void Gateway::stop()
 {
 
+}
+
+void Gateway::sendMessage(std::string message)
+{
+    int n = send(m_clientFd, message.c_str(), message.size(), 0);
+    if(n <= 0)
+    {
+        exit(EXIT_FAILURE);
+    }
 }
