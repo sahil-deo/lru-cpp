@@ -1,5 +1,3 @@
-#pragma once
-
 #include <string>
 
 struct Node
@@ -10,9 +8,9 @@ struct Node
     Node *prev;
 };
 
-inline Node* createNode(std::string key, std::string value)
+inline Node *createNode(std::string key, std::string value)
 {
-    Node* n = new Node;
+    Node *n = new Node;
     n->key = key;
     n->value = value;
     n->prev = nullptr;

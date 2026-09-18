@@ -6,17 +6,15 @@
 
 class Gateway
 {
-    private:
+private:
     int m_serverFd;
     int m_clientFd;
     std::queue<std::string> *m_messages;
     std::mutex *m_mtx;
 
-    private:
-
-
-    public:
-    Gateway(short, std::queue<std::string>*, std::mutex*);
+private:
+public:
+    Gateway(short, std::queue<std::string> *, std::mutex *);
     ~Gateway() = default;
 
     void start();

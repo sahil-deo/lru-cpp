@@ -4,27 +4,43 @@
 #include "gateway.h"
 #include "cache.h"
 #include <thread>
+
+std::vector<std::string> getCommand(std::string &s)
+{
+    std::vector<std::string> args{};
+
+    int prev{};
+    int i{};
+    for (i = 0; i < s.size(); i++)
+    {
+        if (s[i] == ':')
+        {
+            args.push_back(s.substr(prev, i - prev));
+            prev = i + 1;
+        }
+    }
+    return args;
+}
+
 int main()
 {
     // initialize main object
     Cache c;
-    std::string input;
-    std::mutex mtx;
-    std::queue<std::string> messages;
-
+    std::string input{}, message{}, command{}, arg{};
+    std::mutex mtx{};
+    std::queue<std::string> messages{};
+    std::vector<std::string> args;
     Gateway gateway(5555, &messages, &mtx);
 
     std::thread t = std::thread([&gateway]()
-    {
-        gateway.start();
-    });
+                                { gateway.start(); });
 
-    while(1)
+    while (1)
     {
         mtx.lock();
-        if(!messages.empty())
+        if (!messages.empty())
         {
-            input = messages.front();
+            message = messages.front();
             messages.pop();
         }
         else
@@ -34,31 +50,43 @@ int main()
         }
         mtx.unlock();
 
-        if(input.size() != 3)
+        args = getCommand(message);
+
+        for (auto it : args)
         {
-            std::cout << "Invalid Input\n";
+            std::cout << it << " ";
+        }
+        std::cout << "\n";
+        if (args.size() == 0)
+        {
+            gateway.sendMessage("Invalid Command");
             continue;
         }
-        std::cout << input << "\n";
-        std::string command = input.substr(0, 3);
-        std::string arg = input.substr(3);
-        if(command == "get")
+        else if (args.size() == 1)
         {
-            std::cout << c.get("test") << std::endl;
+            if (args[0] == "ext")
+            {
+                exit(EXIT_SUCCESS);
+                continue;
+            }
         }
-        else if(command == "set")
+        else if (args.size() == 2)
         {
-            c.set("test", "test");
+            if (args[0] == "get")
+            {
+                gateway.sendMessage(c.get(args[1]));
+                continue;
+            }
         }
-        else if(command == "ext")
+        else if (args.size() == 3)
         {
-            break;
+            if (args[0] == "set")
+            {
+                c.set(args[1], args[2]);
+                continue;
+            }
         }
-        else
-        {
-            std::cout << "INVALID COMMAND: " << command << "\n";
-        }
+        std::cout << "INVALID COMMAND: " << command << "\n";
     }
     t.join();
-
 }
